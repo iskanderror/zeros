@@ -1,48 +1,51 @@
 module.exports = function zeros(expression) {
   // your solution
-  let pureZeroCount = 0;
-  let freeEvenCount = 0;
-  let pureFiveCount = 0;
+  let zerosInfo = [0,0];
   let multipliersArray = expression.split('*');
   for (let i = 0; i < multipliersArray.length; i++) {
-    let zerosInfo = [0,0,0];
     let number = 0;
     let multiplier = multipliersArray[i];
     let pos = multiplier.indexOf('!!');
     if (pos > -1) {
       number = Number(multiplier.slice(0,pos));
-      zerosInfo = (number%2===0) ? getZerosEven (number) : getZerosOdd (number);
+      (number%2===0) ? updateZerosInfoEven (number,zerosInfo) : updateZerosInfoOdd (number,zerosInfo);
     } else {
       pos = multiplier.indexOf('!');
       number = Number(multiplier.slice(0,pos));
       if (pos > -1) {
-        zerosInfo = getZerosRegular (number);
+        updateZerosInfoRegular (number,zerosInfo);
       }
     }
-    pureZeroCount += zerosInfo[0];
-    freeEvenCount += zerosInfo[1];
-    pureFiveCount += zerosInfo[2];
   }
-  return 0;
+  return Math.min(zerosInfo[0],zerosInfo[1]);
 }
 
-function getZerosRegular (number) {
-  let pureZeroCount = 3;
-  let freeEvenCount = 3;
-  let pureFiveCount = 3;
-  return [pureZeroCount,freeEvenCount,pureFiveCount];
+function updateZerosInfoRegular (number, zerosInfo) {
+  for (let i=1; i<=number; i++) {
+    updateZerosInfo(i,zerosInfo);
+  }
 }
 
-function getZerosOdd (number) {
-  let pureZeroCount = 1;
-  let freeEvenCount = 1;
-  let pureFiveCount = 1;
-  return [pureZeroCount,freeEvenCount,pureFiveCount];
+function updateZerosInfoOdd (number, zerosInfo) {
+  for (let i=1; i<=number; i+=2) {
+    updateZerosInfo(i,zerosInfo);
+  }
 }
 
-function getZerosEven (number) {
-  let pureZeroCount = 2;
-  let freeEvenCount = 2;
-  let pureFiveCount = 2;
-  return [pureZeroCount,freeEvenCount,pureFiveCount];
+function updateZerosInfoEven (number, zerosInfo) {
+  for (let i=2; i<=number; i+=2) {
+    updateZerosInfo(i,zerosInfo);
+  }
 }
+
+function updateZerosInfo(number, zerosInfo) {
+  let tmpNumber = number;
+    while (tmpNumber%5 === 0) {
+      tmpNumber = tmpNumber/5;
+      zerosInfo[0] ++;
+    }
+    while (tmpNumber%2 === 0) {
+      tmpNumber = tmpNumber/2;
+      zerosInfo[1] ++;
+    }
+  }
